@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Квіткова підписка · Суми</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{blush:'#e4ebf2',rose:'#1f4e79',rosed:'#14385a',sage:'#4f7f6c',saged:'#2e5547',cream:'#f5f7fa',ink:'#1e2a35'},fontFamily:{serif:['"Playfair Display"','Georgia','serif'],sans:['Nunito','system-ui','sans-serif']}}}}
+</script>
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:#f5f7fa;color:#1e2a35}
+.fld{width:100%;border:1.5px solid #cfd9e4;background:#fff;border-radius:.75rem;padding:.65rem .85rem;outline:none;color:#4a3b40}
+.fld:focus{border-color:#1f4e79;box-shadow:0 0 0 3px #c9d9ea}
+.card{background:#fff;border:1px solid #dae3ed;border-radius:1.25rem;box-shadow:0 8px 30px -14px rgba(20,56,90,.4)}
+.opt input:checked+span{background:#1f4e79;color:#fff;border-color:#1f4e79}
+.opt span{display:block;text-align:center;border:1.5px solid #cfd9e4;border-radius:.75rem;padding:.6rem .5rem;cursor:pointer;transition:.15s;background:#fff}
+</style>
+</head>
+<body class="font-sans">
+
+<header class="bg-gradient-to-b from-blush to-cream">
+  <nav class="max-w-5xl mx-auto px-5 py-5 flex justify-between items-center">
+    <span class="font-serif text-xl text-rosed">🌸 Квіти Суми</span>
+    <a href="#calc" class="text-sm font-semibold text-saged">Калькулятор →</a>
+  </nav>
+  <div class="max-w-3xl mx-auto px-5 pt-10 pb-16 text-center">
+    <p class="uppercase tracking-widest text-xs text-saged font-bold mb-3">Перша підписка на квіти</p>
+    <h1 class="font-serif text-4xl sm:text-5xl leading-tight text-ink">Турбота — <span class="text-rosed">про яку памʼятаємо ми</span></h1>
+    <p class="mt-5 text-lg text-ink/75">Оберіть тариф, період і кількість доставок, а ми привеземо букети в зручний день, час і за вашою адресою.</p>
+    <a href="#calc" class="inline-block mt-8 bg-rose hover:bg-rosed transition text-white font-bold px-8 py-3.5 rounded-full shadow-lg">Розрахувати підписку</a>
+  </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-5 pb-20">
+  <section id="calc" class="-mt-6 pt-6">
+    <h2 class="font-serif text-3xl text-center mb-8">Калькулятор підписки</h2>
+
+    <div class="card p-5 sm:p-7 space-y-6">
+      <div>
+        <label class="block font-bold mb-2">Тариф</label>
+        <div id="tariffs" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
+        <div id="tariffDesc" class="mt-3 rounded-2xl border border-rose/30 bg-blush/60 p-4 text-sm sm:text-base leading-relaxed"></div>
+      </div>
+      <div>
+        <label class="block font-bold mb-2">Період</label>
+        <div id="periods" class="grid grid-cols-2 gap-2"></div>
+      </div>
+      <div>
+        <label for="extra" class="block font-bold mb-2">Кількість додаткових доставок</label>
+        <select id="extra" class="fld"></select>
+      </div>
+
+      <div class="rounded-2xl bg-blush p-5 space-y-2 text-sm sm:text-base">
+        <div class="flex justify-between"><span>Мінімум доставок за тарифом</span><b id="rMin"></b></div>
+        <div class="flex justify-between"><span>Ціна однієї доставки</span><b id="rUnit"></b></div>
+        <div class="flex justify-between"><span>Додаткові доставки (−5%)</span><b id="rExtra"></b></div>
+        <div class="flex justify-between"><span>Загальна кількість доставок</span><b id="rTotalN"></b></div>
+        <div class="border-t border-rose/30 pt-3 mt-2 flex justify-between items-baseline">
+          <span class="font-bold">Підсумкова ціна</span>
+          <span id="rTotal" class="font-serif text-3xl text-rosed"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mt-14">
+    <h2 class="font-serif text-3xl text-center mb-8">Оформлення замовлення</h2>
+    <form id="orderForm" class="space-y-6">
+      <input type="checkbox" name="botcheck" class="hidden" style="display:none" tabindex="-1" autocomplete="off">
+
+      <div>
+        <h3 class="font-bold text-lg mb-3">🗓 Графік доставок <span id="schedCount" class="text-saged"></span></h3>
+        <div id="schedule" class="space-y-4"></div>
+      </div>
+
+      <div class="card p-5 sm:p-7 space-y-4">
+        <h3 class="font-bold text-lg">📞 Ваш контакт для звʼязку</h3>
+        <div class="grid sm:grid-cols-2 gap-3">
+          <input id="name" class="fld" placeholder="Введіть ім'я, напр.: Олена" required>
+          <input id="phone" type="tel" class="fld" placeholder="Введіть телефон, напр.: +380 50 123 45 67" required pattern="[+0-9\s()\-]{10,}">
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button id="submitBtn" type="submit" class="bg-saged hover:bg-sage transition text-white font-bold px-10 py-4 rounded-full shadow-lg text-lg">Оформити підписку</button>
+        <p id="status" class="mt-4 font-semibold" role="status"></p>
+      </div>
+
+      <section class="pt-2">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-lg">💐 Приклади букетів</h3>
+          <div class="flex gap-2">
+            <button type="button" id="carPrev" aria-label="Назад" class="w-9 h-9 rounded-full bg-rose text-white font-bold">‹</button>
+            <button type="button" id="carNext" aria-label="Вперед" class="w-9 h-9 rounded-full bg-rose text-white font-bold">›</button>
+          </div>
+        </div>
+        <div id="car" class="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3" style="scrollbar-width:thin"></div>
+      </section>
+    </form>
+  </section>
+</main>
+
+<footer class="text-center text-sm text-ink/60 pb-10">🌸 Квіти Суми · доставка по місту</footer>
+
+<script>
+/* ===== ВАШІ ДАНІ З EXCEL ===== */
+const WEB3FORMS_KEY = "ded59621-d40b-4057-8569-4b9bdfe461f2"; // отримайте безкоштовно на web3forms.com
+const TARIFFS = {
+  "Базовий":  { 3: {min:3, price:6000},  6: {min:5,  price:10000} },
+  "Турбота":  { 3: {min:5, price:10000}, 6: {min:9,  price:15000} },
+  "Максимум": { 3: {min:8, price:15000}, 6: {min:15, price:25000} },
+  "Преміум":  { 3: {min:3, price:15000}, 6: {min:6,  price:30000} }
+};
+const EXTRA_DISCOUNT = 0.05;
+const DESC = {
+  "Базовий": ["Ідеальний варіант, якщо ви хочете закрити всі важливі дати близьких людей і більше ніколи про них не турбуватися.","Ви вказуєте дні народження, річниці та інші значущі події — ми доставляємо букети точно в потрібний день. Завчасно нагадуємо вам про наближення важливої дати."],
+  "Турбота": ["Для тих, хто хоче не лише памʼятати про важливі дати, а й регулярно проявляти увагу.","Окрім доставок на свята, близька людина отримуватиме квіти раз на місяць просто так. Ми завчасно нагадуємо вам про всі важливі дати."],
+  "Максимум": ["Максимальний рівень турботи та емоцій протягом усього періоду підписки.","Важливі дати, регулярні доставки раз на два тижні та додаткові сюрпризи без приводу. Ми завчасно нагадуємо вам про наближення кожної важливої дати.","<b>Сюрприз</b> — це додаткова доставка квітів без конкретного приводу. Ми самостійно обираємо сезонний букет і привозимо його в момент, коли цього найменше очікують."],
+  "Преміум": ["Для тих, хто хоче дарувати особливо красиві та статусні букети.","Ви обираєте важливі дати — ми доставляємо преміальні букети точно в потрібний день. Завчасно нагадуємо вам про наближення кожної важливої дати."]
+};
+const SLOTS = ["09:00-13:00","13:00-17:00","17:00-21:00"];
+
+const $ = id => document.getElementById(id);
+const fmt = n => Math.round(n).toLocaleString("uk-UA") + " грн";
+const state = { tariff: "Базовий", period: 3, extra: 0 };
+const saved = [];   // збережені значення графіка
+let calc = {};
+
+function renderChoices(){
+  $("tariffs").innerHTML = Object.keys(TARIFFS).map(t =>
+    `<label class="opt"><input type="radio" name="tariff" value="${t}" class="sr-only" ${t===state.tariff?"checked":""}><span class="font-semibold">${t}</span></label>`).join("");
+  $("periods").innerHTML = [3,6].map(p =>
+    `<label class="opt"><input type="radio" name="period" value="${p}" class="sr-only" ${p===state.period?"checked":""}><span class="font-semibold">${p} місяці${p===6?"в":""}</span></label>`).join("").replace("3 місяціи","3 місяці");
+  $("extra").innerHTML = Array.from({length:11},(_,i)=>`<option value="${i}">${i}</option>`).join("");
+}
+
+function compute(){
+  const {min, price} = TARIFFS[state.tariff][state.period];
+  const unit = price / min;
+  const extraUnit = unit * (1 - EXTRA_DISCOUNT);
+  const extraCost = extraUnit * state.extra;
+  calc = { min, unit, extraUnit, extraCost, totalN: min + state.extra, total: price + extraCost, price };
+  $("tariffDesc").innerHTML = `<b class="font-serif text-lg text-rosed">Тариф «${state.tariff}»</b>` + DESC[state.tariff].map(p=>`<p class="mt-2">${p}</p>`).join("");
+  $("rMin").textContent = min;
+  $("rUnit").textContent = fmt(unit);
+  $("rExtra").textContent = state.extra ? `${state.extra} × ${fmt(extraUnit)} = ${fmt(extraCost)}` : "—";
+  $("rTotalN").textContent = calc.totalN;
+  $("rTotal").textContent = fmt(calc.total);
+  renderSchedule();
+}
+
+function snapshot(){
+  document.querySelectorAll("[data-i]").forEach(b=>{
+    const i = +b.dataset.i;
+    saved[i] = { d: b.querySelector(".d").value, t: b.querySelector(".t").value, a: b.querySelector(".a").value,
+      al: [...b.querySelectorAll(".al:checked")].map(c=>c.value), p: b.querySelector(".pal:checked").value, x: b.querySelector(".x").value };
+  });
+}
+
+function bouquet(v){
+  const P={
+    "Пастельна":{c:["#f4c6d0","#fde2c8","#e8dff5","#cfe8dc","#fff1f3"],d:"ніжні півонії та троянди: рожевий, персиковий, білий"},
+    "Яскрава":{c:["#e63946","#ffb703","#fb5607","#8338ec","#ff006e"],d:"виразні кольори: червоний, жовтий, помаранчевий"},
+    "Монохром":{c:["#7b1e3a","#9b2a4c","#b8395f","#6a1731","#8c2445"],d:"один колір у різних відтінках, напр. бордові троянди"}
+  };
+  const c=P[v].c;
+  return `<svg viewBox="0 0 64 64" class="mx-auto mb-1 w-14 h-14" aria-hidden="true"><path d="M32 62 L18 36 H46 Z" fill="#d9c7a8"/><g stroke="#00000022" stroke-width=".8"><circle cx="22" cy="26" r="9" fill="${c[0]}"/><circle cx="42" cy="26" r="9" fill="${c[1]}"/><circle cx="32" cy="17" r="9" fill="${c[2]}"/><circle cx="27" cy="34" r="7" fill="${c[3]}"/><circle cx="38" cy="34" r="7" fill="${c[4]}"/></g></svg><b class="block">${v}</b><small class="block text-xs leading-tight opacity-80 mt-1">${P[v].d}</small>`;
+}
+
+function renderSchedule(){
+  snapshot();
+  const today = new Date().toISOString().split("T")[0];
+  let html = "";
+  for(let i=0;i<calc.totalN;i++){
+    const s = saved[i] || {};
+    html += `
+    <div data-i="${i}" class="card p-4 sm:p-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="w-7 h-7 rounded-full bg-rose text-white text-sm font-bold flex items-center justify-center">${i+1}</span>
+        <b>Доставка ${i+1}${i>=calc.min?' <span class="text-xs text-saged font-semibold">(додаткова)</span>':''}</b>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3">
+        <div><label class="block text-sm text-ink/70 mb-1">📅 Вибір дати</label><input type="date" class="fld d" min="${today}" value="${s.d||""}" required aria-label="Дата"></div>
+        <div><label class="block text-sm text-ink/70 mb-1">🕓 Бажана година доставки</label><select class="fld t" required aria-label="Інтервал">
+          ${SLOTS.map(x=>`<option ${s.t===x?"selected":""}>${x}</option>`).join("")}
+        </select></div>
+        <div class="sm:col-span-2"><label class="block text-sm text-ink/70 mb-1">🗺️ Вкажіть адресу</label><input class="fld a" placeholder="Введіть адресу в м. Суми, напр.: вул. Харківська, 12, кв. 5" value="${(s.a||"").replace(/"/g,"&quot;")}" required></div>
+        <div class="sm:col-span-2 border-t border-rose/20 pt-3">
+          <p class="text-sm font-bold text-red-700 mb-2">🚫 НЕ додавати в букет (алергія або не подобається):</p>
+          <div class="flex flex-wrap gap-x-4 gap-y-2">
+            ${["Лілії","Ромашки","Сильні аромати"].map(v=>`<label class="flex items-center gap-2 text-sm"><input type="checkbox" class="al accent-rose w-4 h-4" value="${v}" ${(s.al||[]).includes(v)?"checked":""}> ${v}</label>`).join("")}
+          </div>
+        </div>
+        <textarea rows="2" class="fld x sm:col-span-2" placeholder="Введіть привід для букета та побажання, напр.: день народження мами, без сильних ароматів">${(s.x||"").replace(/</g,"&lt;")}</textarea>
+        <div class="sm:col-span-2">
+          <p class="text-sm text-ink/70 mb-2">🎨 Гама букета:</p>
+          <div class="grid grid-cols-3 gap-2 text-sm">
+            ${["Пастельна","Яскрава","Монохром"].map(v=>`<label class="opt"><input type="radio" name="pal${i}" class="pal sr-only" value="${v}" ${(s.p||"Пастельна")===v?"checked":""}><span>${bouquet(v)}</span></label>`).join("")}
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+  $("schedule").innerHTML = html;
+  $("schedCount").textContent = `(${calc.totalN})`;
+}
+
+document.addEventListener("change", e=>{
+  if(e.target.name==="tariff"){ state.tariff = e.target.value; compute(); }
+  if(e.target.name==="period"){ state.period = +e.target.value; compute(); }
+  if(e.target.id==="extra"){ state.extra = +e.target.value; compute(); }
+});
+
+$("orderForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  snapshot();
+  const st = $("status"), btn = $("submitBtn");
+  const lines = [
+    `Тариф: ${state.tariff}`,
+    `Період: ${state.period} міс.`,
+    `Доставок за тарифом: ${calc.min}; додаткових: ${state.extra}; всього: ${calc.totalN}`,
+    `Вартість додаткових: ${fmt(calc.extraCost)}`,
+    `ПІДСУМОК: ${fmt(calc.total)}`,
+    ``, `ГРАФІК:`,
+    ...saved.slice(0,calc.totalN).map((s,i)=>`${i+1}. ${s.d} | ${s.t} | ${s.a}\n   НЕ додавати: ${(s.al||[]).join(", ")||"—"}; Гама: ${s.p}; Побажання: ${s.x||"—"}`),
+    ``,
+    `Ім'я: ${$("name").value}`, `Телефон: ${$("phone").value}`
+  ];
+  btn.disabled = true; btn.textContent = "Надсилаємо…"; st.textContent = "";
+  try{
+    const r = await fetch("https://api.web3forms.com/submit",{
+      method:"POST",
+      headers:{"Content-Type":"application/json",Accept:"application/json"},
+      body: JSON.stringify({
+        access_key: WEB3FORMS_KEY,
+        subject: `Нова підписка: ${state.tariff}, ${state.period} міс. — ${fmt(calc.total)}`,
+        from_name: "Квіткова підписка Суми",
+        name: $("name").value, phone: $("phone").value,
+        message: lines.join("\n")
+      })
+    });
+    const j = await r.json();
+    if(j.success){ st.className="mt-4 font-semibold text-saged"; st.textContent="Дякуємо! Заявку надіслано — ми скоро зв'яжемося з вами 🌷"; e.target.reset(); saved.length=0; compute(); }
+    else throw new Error(j.message);
+  }catch(err){
+    st.className="mt-4 font-semibold text-rosed";
+    st.textContent="Не вдалося надіслати. Перевірте ключ Web3Forms або спробуйте ще раз.";
+  }
+  btn.disabled=false; btn.textContent="Оформити підписку";
+});
+
+/* ===== КАРУСЕЛЬ ПРИКЛАДІВ ===== */
+const EX = {
+  "Пастельна": ["#f4c6d0","#fde2c8","#e8dff5","#cfe8dc","#fff1f3"],
+  "Яскрава":    ["#e63946","#ffb703","#fb5607","#8338ec","#ff006e"],
+  "Монохром":   ["#7b1e3a","#9b2a4c","#b8395f","#6a1731","#8c2445"]
+};
+const flw = (x,y,r,c)=>`<g>${[0,72,144,216,288].map(a=>`<circle cx="${(x+r*Math.cos(a*Math.PI/180)).toFixed(1)}" cy="${(y+r*Math.sin(a*Math.PI/180)).toFixed(1)}" r="${r*0.85}" fill="${c}" stroke="#00000020"/>`).join("")}<circle cx="${x}" cy="${y}" r="${r*0.5}" fill="#f6d365"/></g>`;
+function exSvg(c, variant){
+  const leaves = `<g fill="#7fa38c"><ellipse cx="55" cy="95" rx="12" ry="28" transform="rotate(-35 55 95)"/><ellipse cx="145" cy="95" rx="12" ry="28" transform="rotate(35 145 95)"/></g>`;
+  if(variant===0) return `<svg viewBox="0 0 200 200" class="w-full" aria-hidden="true"><g stroke="#6f9a7d" stroke-width="3"><path d="M70 70 L92 150"/><path d="M130 70 L108 150"/><path d="M100 45 L100 150"/><path d="M80 105 L94 150"/><path d="M120 105 L106 150"/></g><path d="M68 150 h64 l-8 42 h-48 z" fill="#9fb4c7"/>${flw(70,70,16,c[0])}${flw(130,70,16,c[1])}${flw(100,45,16,c[2])}${flw(80,105,14,c[3])}${flw(120,105,14,c[4])}</svg>`;
+  return `<svg viewBox="0 0 200 200" class="w-full" aria-hidden="true">${leaves}<path d="M100 196 L52 112 H148 Z" fill="#d9c7a8"/><path d="M88 150 h24 v8 h-24 z" fill="#1f4e79"/>${flw(65,100,15,c[1])}${flw(135,100,15,c[0])}${flw(100,100,15,c[4])}${flw(80,68,15,c[2])}${flw(120,68,15,c[3])}${flw(100,40,15,c[1])}</svg>`;
+}
+const car = $("car");
+car.innerHTML = Object.keys(EX).flatMap(name=>[0,1].map(v=>
+  `<figure class="card shrink-0 snap-center p-3 text-center" style="width:230px">${exSvg(v?EX[name].slice().reverse():EX[name], v)}<figcaption class="font-semibold mt-1">${name} <span class="text-xs opacity-60">· приклад ${v+1}</span></figcaption></figure>`)).join("");
+$("carPrev").onclick = ()=>car.scrollBy({left:-246,behavior:"smooth"});
+$("carNext").onclick = ()=>car.scrollBy({left:246,behavior:"smooth"});
+
+renderChoices(); compute();
+</script>
+</body>
+</html>
